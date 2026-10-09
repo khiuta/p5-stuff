@@ -1,0 +1,87 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f0f0f0;
+}
+
+#layout {
+  display: flex;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 260px;
+  background: #252526;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-right: 1px solid #333;
+}
+
+/* Button groups: button on left, label text on right */
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Input groups: label on top, field underneath */
+.input-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-col label,
+.button-row label {
+  font-size: 14px;
+  color: #ccc;
+  user-select: none;
+}
+
+/* Control styling */
+button {
+  background-color: #0e639c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background-color: #1177bb;
+}
+
+input[type="text"],
+input[type="number"] {
+  background: #3c3c3c;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 6px 10px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #0e639c;
+}
+
+#canvas-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

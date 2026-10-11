@@ -77,9 +77,9 @@ class viewer{
         this.looking_at.x = x - this.pos.x;
         this.looking_at.y = y - this.pos.y;
         // recalculates bounding angles
-        let tmp = createVector(1, 0);
+        let tmp = createVector(1, 0); // x-axis
         let looking_at_angle = Math.atan2(cross_prod_2d(tmp, this.looking_at), tmp.dot(this.looking_at));
-        let fov_angle_rad = deg_to_rad(this.angle / 2);
+        let fov_angle_rad = deg_to_rad(this.angle / 2); // half of the angle fov in radians
         this.start_angle = looking_at_angle - fov_angle_rad;
         this.end_angle = looking_at_angle + fov_angle_rad;
     }
@@ -93,8 +93,10 @@ class viewer{
         let i = 1;
         let seen_enemies = 0;
         targets.forEach(t => {
+            // vec pointing to the target relative to the viewer
             let tmp = createVector(t.x - this.pos.x, t.y - this.pos.y)
             let xaxis = createVector(1, 0);
+            // the angle tmp is pointing to
             let t_angle = Math.atan2(cross_prod_2d(xaxis, tmp), xaxis.dot(tmp));
             text(`Angle: ${rad_to_deg(t_angle)}`, 100, 20*i);
             i++;

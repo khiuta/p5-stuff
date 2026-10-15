@@ -98,7 +98,6 @@ class viewer{
             let xaxis = createVector(1, 0);
             // the angle tmp is pointing to
             let t_angle = Math.atan2(cross_prod_2d(xaxis, tmp), xaxis.dot(tmp));
-            text(`Angle: ${rad_to_deg(t_angle)}`, 100, 20*i);
             i++;
             let dist_to_tgt = mag(t.x - this.pos.x, t.y - this.pos.y);
             if(dist_to_tgt <= this.range && t_angle > this.start_angle && t_angle < this.end_angle){
@@ -106,13 +105,11 @@ class viewer{
             }
         });
         if(seen_enemies) this.color = 'red';
-        text(`Start angle: ${rad_to_deg(this.start_angle)}`, 100, 100);
-        text(`End angle: ${rad_to_deg(this.end_angle)}`, 100, 120);
-        text(`Seen enemies: ${seen_enemies}`, 100, 140)
     }
 }
 
 let col = 'blue'
+let i = 0;
 
 function draw() {
     background(220);
@@ -125,9 +122,19 @@ function draw() {
     let c4 = createVector(750, 480);
     let targets = [c1, c2, c3, c4];
     let cam1 = new viewer(200, 60, W/2, H/2, col);
-    cam1.setLookingAt(mouseX, mouseY);
-    cam1.searchTargets(targets);
+    let cam2 = new viewer(250, 80, W/2 - 100, H/2 + 100, col);
+    let cam3 = new viewer(150, 50, W/2 + 100, H/2 - 100, col);
+    let viewers = [cam1, cam2, cam3];
+    let start = performance.now();
+    viewers.forEach(v => {
+        v.setLookingAt(mouseX, mouseY);
+        v.searchTargets(targets);
+    })
+    let total = performance.now() - start;
+    text(`Search and detection time: ${total.toExponential(2)}`, 100, 20)
     cam1.showFOV();
+    cam2.showFOV();
+    cam3.showFOV();
     
     targets.forEach(t => {
         fill('black');

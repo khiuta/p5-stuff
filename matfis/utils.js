@@ -96,6 +96,6 @@ export class vector2{
 
     /**Draws a line representing the vector, starting at the origin */
     show(origin){
-        line(origin.x, origin.y, this.x, this.y);
+        line(origin.x, origin.y, origin.x + this.x, origin.y + this.y);
     }
 }

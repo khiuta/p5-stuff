@@ -1,7 +1,7 @@
 import { vector2 } from '../utils.js'
 
-const W = 800;
-const H = 600;
+const W = 1200;
+const H = 800;
 
 const Interactions = Object.freeze({
     RANDOM_VEC:  "r",
@@ -20,6 +20,20 @@ let aux_points = []
 let vecs = []
 let vecs_origins = []
 
+/**Returns the sum of all vectors */
+function sum_vectors(vecs){
+    let tmp = new vector2(vecs[0].x, vecs[0].y);
+
+    for(let i = 1; i < vecs.length; i++){
+        tmp.sumSelf(vecs[i]);
+    }
+
+    console.log(vecs);
+    console.log(tmp);
+
+    return tmp;
+}
+
 function draw() {
     background(220);
 
@@ -31,13 +45,21 @@ function draw() {
                 vecs_origins.pop();
             }
             else if(key == Interactions.RANDOM_VEC){
-                let x1 = Math.random(0, W) * W;
-                let y1 = Math.random(0, H) * H;
-                let x2 = Math.random(0, W) * W;
-                let y2 = Math.random(0, H) * H;
-                let tmp = new vector2(x2, y2);
+                let x1 = Math.random() * W;
+                let y1 = Math.random() * H;
+                let x2 = Math.random() * W;
+                let y2 = Math.random() * H;
+                let dx = x2 - x1;
+                let dy = y2 - y1;
+
+                let tmp = new vector2(dx, dy);
                 vecs.push(tmp);
                 vecs_origins.push({x: x1, y: y1});
+            }
+            else if(key == Interactions.SUM_VECS){
+                let tmp = sum_vectors(vecs);
+                vecs.push(tmp);
+                vecs_origins.push({x: vecs_origins[0].x, y: vecs_origins[0].y})
             }
         }
     } else has_typed = false;
@@ -50,7 +72,10 @@ function draw() {
     } else has_clicked = false; 
 
     if(aux_points.length >= 2){
-        let tmp = new vector2(aux_points[1][0], aux_points[1][1]);
+        let dx = aux_points[1][0] - aux_points[0][0];
+        let dy = aux_points[1][1] - aux_points[0][1];
+        
+        let tmp = new vector2(dx, dy);
         vecs.push(tmp);
         vecs_origins.push({x: aux_points[0][0], y: aux_points[0][1]})
         aux_points = []

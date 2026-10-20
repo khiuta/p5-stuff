@@ -2,11 +2,28 @@
 #include <stdlib.h>
 #include <math.h>
 
+const size_t BINARY_STRING_SIZE = sizeof(int) * 8;
+
 typedef struct{
   int* data;
   size_t size; // allocated slots
   size_t capacity; // total capacity
 } IntSet;
+
+
+char* toBinaryString(int n) {
+  int num_bits = BINARY_STRING_SIZE;
+  char *string = malloc(num_bits + 1);
+  if (!string) {
+    return NULL;
+  }
+  for (int i = num_bits - 1; i >= 0; i--) {
+    string[i] = (n & 1) + '0';
+    n >>= 1;
+  }
+  string[num_bits] = '\0';
+  return string;
+}
 
 IntSet* createEmptySet(){
   IntSet* set = (IntSet *)malloc(sizeof(IntSet));
@@ -178,22 +195,77 @@ int isProperSubset(IntSet* set, IntSet* subset){
 
 IntSet** allProperSubsets(IntSet* set){
   // 2^n - 1 since its just proper subsets
-  int n_of_subsets = powf(2.0f, (float)set->size-1);
+  int n_of_subsets = powf(2.0f, (float)set->size) - 1;
   IntSet** proper_subsets = malloc(n_of_subsets * sizeof(IntSet*));
 
-  
+  // tracking current subset with binary number representation
+  int subset_track = 0;
+  char* subset_binary = toBinaryString(subset_track);
+
+  for(int i = 0; i < n_of_subsets; i++){
+    // empty set
+    if(i == 0){
+      IntSet* subset = createEmptySet();
+      proper_subsets[i] = subset;
+    } else {
+      // initializing the subset
+      IntSet* subset = (IntSet *)malloc(sizeof(IntSet));
+      subset->data = (int *)malloc(set->size * sizeof(int));
+      subset->size = 0;
+      subset->capacity = set->size;
+
+      int j = 0;
+      int subset_index = 0;
+      // the number of leftover bits to be ignored from the string
+      int rest = BINARY_STRING_SIZE - set->size;
+
+      while(subset_binary[j]){
+        if(rest <= 0){
+          if(subset_binary[j] == '1'){
+            subset->data[subset_index] = set->data[BINARY_STRING_SIZE - j - 1];
+            subset_index++;
+            subset->size++;
+          }
+        } else rest--;
+        j++;
+      }
+
+      if(subset->size > 0 && subset->size < subset->capacity){
+        // remove unused slots, if any
+        int* tmp = (int *)realloc(subset->data, subset->size * sizeof(int));
+
+        if(tmp == NULL){
+          printf("Memory reallocation failed!\n");
+          free(subset);
+          return NULL;
+        }
+
+        subset->data = tmp;
+      }
+
+      proper_subsets[i] = subset;
+    }
+
+    free(subset_binary);
+    subset_track++;
+    subset_binary = toBinaryString(subset_track);
+  }
+
+  free(subset_binary);
+  return proper_subsets;
 }
 
 int main() {
-    int els[] = {1, 2, 3};
+    int els[] = {1, 2, 3, 4};
     int els2[] = {1, 4, 5};
     int els3[] = {1, 3};
-    IntSet* set = createSet(els, 3);
+    IntSet* set = createSet(els, 4);
     IntSet* set2 = createSet(els2, 3);
     IntSet* set3 = createSet(els3, 2);
     IntSet* diff = setDiff(set, set2);
     IntSet* inter = setIntersection(set, set2);
     IntSet* union_set = unionSet(set, set2);
+    IntSet** proper_subsets = allProperSubsets(set);
 
     showSet(set, "A");
     showSet(set2, "B");
@@ -204,8 +276,13 @@ int main() {
     printf("\nIs proper subset: %i", isProperSubset(set, set3));
     printf("\nIs proper subset: %i", isProperSubset(set, set));
 
+    char buffer[50];
 
-    // 5. Free the allocated memory
+    for (int i = 0; i < (int)powf(2, set->size) - 1; i++) {
+      snprintf(buffer, sizeof(buffer), "Subset %d", i);
+      showSet(proper_subsets[i], buffer);
+    }
+
     // free(arr);
     // arr = NULL; // Good practice to prevent dangling pointers
 

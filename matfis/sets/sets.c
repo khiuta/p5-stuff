@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct{
   int* data;
@@ -149,11 +150,47 @@ IntSet* unionSet(IntSet* set_a, IntSet* set_b){
   return union_set;
 }
 
+int belongsToSet(IntSet* set, int element){
+  int found = 0;
+  for(int i = 0; i < set->size; i++){
+    if(set->data[i] == element) found = 1;
+  }
+
+  return found;
+}
+
+int isProperSubset(IntSet* set, IntSet* subset){
+  // if they are the same size, the subset can't be proper
+  if(set->size == subset->size) return 0;
+
+  // finds a match for each element
+  int found_each = 0;
+  for(int i = 0; i < subset->size; i++){
+    for(int j = 0; j < set->size; j++){
+      if(subset->data[i] == set->data[j]) found_each++;
+    }
+  }
+
+  // if every item from the subset found a match, then every item incremented the value
+  if(found_each == subset->size) return 1;
+  else return 0;
+}
+
+IntSet** allProperSubsets(IntSet* set){
+  // 2^n - 1 since its just proper subsets
+  int n_of_subsets = powf(2.0f, (float)set->size-1);
+  IntSet** proper_subsets = malloc(n_of_subsets * sizeof(IntSet*));
+
+  
+}
+
 int main() {
     int els[] = {1, 2, 3};
     int els2[] = {1, 4, 5};
+    int els3[] = {1, 3};
     IntSet* set = createSet(els, 3);
     IntSet* set2 = createSet(els2, 3);
+    IntSet* set3 = createSet(els3, 2);
     IntSet* diff = setDiff(set, set2);
     IntSet* inter = setIntersection(set, set2);
     IntSet* union_set = unionSet(set, set2);
@@ -163,6 +200,10 @@ int main() {
     showSet(diff, "A - B");
     showSet(inter, "A inter B");
     showSet(union_set, "A U B");
+    printf("\nBelongs to set: %i", belongsToSet(set, 2));
+    printf("\nIs proper subset: %i", isProperSubset(set, set3));
+    printf("\nIs proper subset: %i", isProperSubset(set, set));
+
 
     // 5. Free the allocated memory
     // free(arr);
